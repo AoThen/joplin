@@ -2,11 +2,6 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('keystore.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -126,10 +121,21 @@ android {
             //     keyAlias JOPLIN_RELEASE_KEY_ALIAS
             //     keyPassword JOPLIN_RELEASE_KEY_PASSWORD
             // }
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
+        
+            try {
+                def keystoreProperties = new Properties()
+                keystoreProperties.load(rootProject.file("keystore.properties").newInputStream())
+                releaseSigning = signingConfigs.create("release") {
+                    keyAlias keystoreProperties['keyAlias']
+                    keyPassword keystoreProperties['keyPassword']
+                    storeFile rootProject.file(keystoreProperties['storeFile'])
+                    storePassword keystoreProperties['storePassword']
+                }
+            } catch (Exception ignored) {
+                releaseSigning = signingConfigs.debug
+            }
+
+
         }
     }
     buildTypes {
