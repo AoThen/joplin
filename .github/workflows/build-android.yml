@@ -59,7 +59,7 @@ jobs:
           echo "storePassword=${{ secrets.SIGN_STORE_PASSWORD }}" > keystore.properties
           echo "keyAlias=${{ secrets.SIGN_KEY_ALIAS }}" >> keystore.properties
           echo "keyPassword=${{ secrets.SIGN_STORE_PASSWORD }}" >> keystore.properties
-          echo "storeFile=../kt.jks" >> keystore.properties
+          echo "storeFile=kt.jks" >> keystore.properties
           echo "${{ secrets.SIGNING_KEY_BASE64 }}" | base64 -d > kt.jksx
 
         # env:
