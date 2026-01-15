@@ -15,6 +15,14 @@ jobs:
           sudo apt-get update || true
           sudo apt-get install -y libsecret-1-dev
 
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 3
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -60,7 +68,18 @@ jobs:
         run: |
           cd packages/app-mobile/android
           ./gradlew assembleRelease
-      
+
+      - name: Prepare App
+        run: |
+          mkdir -p ${{ github.workspace }}/OutAPK/
+          find . -name "*.apk" -exec mv {} ${{ github.workspace }}/OutAPK/ \;
+
+      - name: Upload App To Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitwarden
+          path: ${{ github.workspace }}/OutAPK/*.apk
+          
       - name: Verify alignment
         run: |
           cd packages/app-mobile/android/app
