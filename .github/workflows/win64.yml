@@ -43,7 +43,7 @@ jobs:
         # To ensure that the operations stop on failure, all commands
         # should be on one line with "&&" in between.
         run: |
-          yarn install && cd packages/app-desktop && yarn dist
+          yarn install && cd packages/app-desktop && yarn dist --x64
 
       - name: Upload digest
         uses: actions/upload-artifact@v6
