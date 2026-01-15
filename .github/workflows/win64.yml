@@ -1,9 +1,13 @@
 name: Joplin Win64
-on: [push, pull_request]
+on: 
+  push:
+    - .github/workflows/win64.yml
 jobs:
   Main:
     # We always process server or desktop release tags, because they also publish the release
     runs-on: ${{ matrix.os }}
+    permissions:
+      actions: write
     strategy:
       matrix:
         # Do not use unbuntu-latest because it causes `The operation was canceled` failures:
@@ -15,18 +19,25 @@ jobs:
       - name: Setup build environment
         uses: ./.github/workflows/shared/setup-build-environment
 
-
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 3
+          
       - name: Build and publish Windows app
         if: runner.os == 'Windows'
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           IS_CONTINUOUS_INTEGRATION: 1
           BUILD_SEQUENCIAL: 1
-          SSL_ESIGNER_USER_NAME: ${{ secrets.SSL_ESIGNER_USER_NAME }}
-          SSL_ESIGNER_USER_PASSWORD: ${{ secrets.SSL_ESIGNER_USER_PASSWORD }}
-          SSL_ESIGNER_CREDENTIAL_ID: ${{ secrets.SSL_ESIGNER_CREDENTIAL_ID }}
-          SSL_ESIGNER_USER_TOTP: ${{ secrets.SSL_ESIGNER_USER_TOTP }}
-          SIGN_APPLICATION: 1
+          # SSL_ESIGNER_USER_NAME: ${{ secrets.SSL_ESIGNER_USER_NAME }}
+          # SSL_ESIGNER_USER_PASSWORD: ${{ secrets.SSL_ESIGNER_USER_PASSWORD }}
+          # SSL_ESIGNER_CREDENTIAL_ID: ${{ secrets.SSL_ESIGNER_CREDENTIAL_ID }}
+          # SSL_ESIGNER_USER_TOTP: ${{ secrets.SSL_ESIGNER_USER_TOTP }}
+          # SIGN_APPLICATION: 1
         # To ensure that the operations stop on failure, all commands
         # should be on one line with "&&" in between.
         run: |
