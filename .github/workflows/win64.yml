@@ -31,7 +31,6 @@ jobs:
       - name: Build and publish Windows app
         if: runner.os == 'Windows'
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           IS_CONTINUOUS_INTEGRATION: 1
           BUILD_SEQUENCIAL: 1
           SSL_ESIGNER_USER_NAME: ${{ secrets.SSL_ESIGNER_USER_NAME }}
@@ -39,6 +38,8 @@ jobs:
           SSL_ESIGNER_CREDENTIAL_ID: ${{ secrets.SSL_ESIGNER_CREDENTIAL_ID }}
           SSL_ESIGNER_USER_TOTP: ${{ secrets.SSL_ESIGNER_USER_TOTP }}
           SIGN_APPLICATION: 0
+          GH_TOKEN: ${{ github.token }} 
+          #${{ secrets.GH_TOKEN }}
         # To ensure that the operations stop on failure, all commands
         # should be on one line with "&&" in between.
         run: |
