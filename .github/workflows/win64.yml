@@ -1,7 +1,8 @@
 name: Joplin Win64
 on: 
   push:
-    - .github/workflows/win64.yml
+    paths:
+      - .github/workflows/win64.yml
 jobs:
   Main:
     # We always process server or desktop release tags, because they also publish the release
